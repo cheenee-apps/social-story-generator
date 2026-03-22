@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -19,8 +20,16 @@ if (!SPEECH_KEY || !SPEECH_REGION) {
 }
 
 const rootDir = path.join(__dirname, "..");
+
+/* Serve all frontend files (index.html, login.html, story.html, style.css, script.js, etc.) */
 app.use(express.static(rootDir));
 
+/* Default route */
+app.get("/", (req, res) => {
+  res.sendFile(path.join(rootDir, "login.html"));
+});
+
+/* Azure TTS endpoint */
 app.post("/api/tts", async (req, res) => {
   try {
     const { text, language = "en", style = "feminine" } = req.body || {};
@@ -56,25 +65,35 @@ app.post("/api/tts", async (req, res) => {
     synthesizer.speakTextAsync(
       text,
       (result) => {
-        const audio = Buffer.from(result.audioData);
-        res.setHeader("Content-Type", "audio/mpeg");
-        res.send(audio);
-        synthesizer.close();
+        try {
+          const audio = Buffer.from(result.audioData);
+          res.setHeader("Content-Type", "audio/mpeg");
+          res.send(audio);
+        } finally {
+          synthesizer.close();
+        }
       },
       (error) => {
-        synthesizer.close();
-        res.status(500).json({ error: String(error) });
+        try {
+          console.error("Azure TTS error:", error);
+          res.status(500).json({ error: String(error) });
+        } finally {
+          synthesizer.close();
+        }
       }
     );
   } catch (error) {
+    console.error("Server error:", error);
     res.status(500).json({ error: String(error) });
   }
 });
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(rootDir, "login.html"));
+/* Optional: health check */
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
+/* Start server */
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
