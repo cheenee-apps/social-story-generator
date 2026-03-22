@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Story</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<script>
+  if (localStorage.getItem("access") !== "yes") {
+    window.location.href = "login.html";
+  }
+</script>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>Create a Social Story</h1>
+      <p>Fill in the form, then click Generate Story.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card note-card">
+      <h3>Important Language Reminder</h3>
+      <p id="topLanguageReminder">
+        If you choose Tagalog or Ilokano, please type your inputs in the same language so the story stays clear and natural.
+      </p>
+    </section>
+
+    <section class="card">
+      <form id="storyForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Student Name</label>
+            <input type="text" id="name" placeholder="e.g., Mia" required />
+          </div>
+
+          <div class="form-group">
+            <label for="transition">Transition Type</label>
+            <select id="transition" required>
+              <option value="">Select a transition</option>
+              <option value="starting class">Starting class</option>
+              <option value="switching activities">Switching activities</option>
+              <option value="going to break">Going to break / recess</option>
+              <option value="ending class">Ending class / dismissal</option>
+              <option value="moving to another room">Moving to another room</option>
+              <option value="following a routine">Following a routine</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="setting">Place / Setting</label>
+            <input type="text" id="setting" placeholder="e.g., classroom, canteen, therapy room" required />
+          </div>
+
+          <div class="form-group">
+            <label for="emotion">Student Feeling</label>
+            <input type="text" id="emotion" placeholder="e.g., nervous, excited, frustrated" required />
+          </div>
+
+          <div class="form-group">
+            <label for="support">Helpful Support</label>
+            <input type="text" id="support" placeholder="e.g., timer, teacher reminder, reward chart" />
+          </div>
+
+          <div class="form-group">
+            <label for="goal">Goal</label>
+            <input type="text" id="goal" placeholder="e.g., stay calm, follow directions, wait for turn" />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="customTransition">If Custom, describe it here</label>
+            <input type="text" id="customTransition" placeholder="e.g., packing up after art class" />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="details">Personal Details to Include</label>
+            <textarea id="details" rows="3" placeholder="e.g., likes stars, responds well to praise, sits near teacher"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="characterType">Character Option</label>
+            <select id="characterType">
+              <option value="🧒">🧒 Child</option>
+              <option value="👦">👦 Boy</option>
+              <option value="👧">👧 Girl</option>
+              <option value="🧑">🧑 Neutral learner</option>
+              <option value="🎒">🎒 Learner with bag</option>
+              <option value="🌟">🌟 Star learner</option>
+              <option value="🦸">🦸 Super learner</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="photoUpload">Upload Student Picture (Optional)</label>
+            <input type="file" id="photoUpload" accept="image/*" />
+          </div>
+
+          <div class="form-group">
+            <label for="storyLanguage">Story Language</label>
+            <select id="storyLanguage">
+              <option value="en">English</option>
+              <option value="tl">Tagalog</option>
+              <option value="ilo">Ilokano</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="voiceStyle">Read-Aloud Voice</label>
+            <select id="voiceStyle">
+              <option value="default">Default</option>
+              <option value="feminine">Feminine</option>
+              <option value="masculine">Masculine</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="voiceSelect">Exact Voice (Optional)</label>
+            <select id="voiceSelect">
+              <option value="">Auto-select allowed voice</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="note-card upload-note">
+          <strong>Privacy reminder:</strong>
+          Only upload a student photo if you have permission and are following your school’s privacy rules.
+        </div>
+
+        <div class="helper-box" id="languageGuidanceBox">
+          <h3>Language Guidance</h3>
+          <p id="languageGuidanceText">
+            If you choose Tagalog or Ilokano, type the fill-ins in the same language so the story stays natural and coherent.
+          </p>
+        </div>
+
+        <div class="helper-box">
+          <h3>Story Writing Guide</h3>
+          <ul>
+            <li>Use clear and positive language.</li>
+            <li>Focus on what the learner can do.</li>
+            <li>Keep the story short and predictable.</li>
+            <li>Use familiar supports and routines.</li>
+          </ul>
+        </div>
+
+        <div class="button-row">
+          <button type="submit" class="btn">Generate Story</button>
+          <button type="button" class="btn secondary-btn" id="clearBtn">Clear</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Story Preview</h2>
+
+      <div class="character-preview-box">
+        <div id="characterPreview" class="character-avatar">🧒</div>
+        <img id="photoPreview" class="photo-preview hidden" alt="Student photo preview" />
+      </div>
+
+      <h2>Editable Story</h2>
+      <textarea id="storyText" rows="12" placeholder="Your story will appear here..."></textarea>
+
+      <div class="button-row compact-buttons">
+        <button type="button" class="btn small-btn" id="saveBtn">Save</button>
+        <button type="button" class="btn secondary-btn small-btn" id="copyBtn">Copy</button>
+        <button type="button" class="btn secondary-btn small-btn" id="pdfBtn">PDF</button>
+        <button type="button" class="btn secondary-btn small-btn" id="downloadMp3Btn">MP3</button>
+        <button type="button" class="btn secondary-btn small-btn" id="readAloudBtn">Read</button>
+        <button type="button" class="btn secondary-btn small-btn" id="pauseReadingBtn">Pause</button>
+        <button type="button" class="btn secondary-btn small-btn" id="resumeReadingBtn">Resume</button>
+        <button type="button" class="btn secondary-btn small-btn" id="stopReadingBtn">Stop</button>
+        <button type="button" class="btn secondary-btn small-btn" onclick="window.print()">Print</button>
+      </div>
+
+      <p class="muted read-aloud-note">
+        Read Aloud and MP3 use the full one-page story.
+      </p>
+    </section>
+<button class="btn secondary-btn small-btn" onclick="logout()">Logout</button>
+    <section class="card">
+      <h2>One Pager Preview</h2>
+      <div class="one-pager" id="onePagerOutput">
+        <div class="one-pager-header">
+          <div class="one-pager-visual">
+            <div id="onePagerCharacter" class="book-character">🧒</div>
+            <img id="onePagerPhoto" class="book-photo hidden" alt="One pager student photo" />
+          </div>
+
+          <div class="one-pager-title-block">
+            <h2 id="onePagerTitle">My Social Story</h2>
+            <p id="onePagerSubtitle">A personalized transition story</p>
+          </div>
+        </div>
+
+        <div id="onePagerText" class="one-pager-text">
+          Your generated story will appear here.
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Saved Stories</h2>
+      <div id="savedStories">
+        <p class="muted">No saved stories yet.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <a href="index.html" class="btn secondary-btn">Back to Home</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 Teacher Social Story Builder</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+<script>
+  function logout() {
+    localStorage.removeItem("access");
+    window.location.href = "login.html";
+  }
+</script>
+</body>
+</html>

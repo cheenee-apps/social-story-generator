@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Social Story Builder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<!-- 🔒 PASSWORD PROTECTION -->
+<script>
+  if (localStorage.getItem("access") !== "yes") {
+    window.location.href = "login.html";
+  }
+</script>
+
+<div class="container">
+
+  <h1>Social Story Builder</h1>
+
+  <p>Create personalized social stories for your students.</p>
+
+  <a href="story.html" class="btn">Create Story</a>
+
+  <br><br>
+
+  <button class="btn secondary-btn" onclick="logout()">Logout</button>
+
+</div>
+
+<!-- 🔒 LOGOUT SCRIPT -->
+<script>
+  function logout() {
+    localStorage.removeItem("access");
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>

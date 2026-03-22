@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="card" style="max-width:400px;margin:80px auto;">
+
+    <h2>Teacher Access</h2>
+
+    <input type="password" id="password" placeholder="Enter password" />
+
+    <br><br>
+
+    <button class="btn" onclick="login()">Enter</button>
+
+    <p id="msg" class="muted"></p>
+
+  </div>
+
+</div>
+
+<script>
+  const PASSWORD = "teach123"; // 🔑 CHANGE THIS
+
+  function login() {
+    const input = document.getElementById("password").value;
+
+    if (input === PASSWORD) {
+      localStorage.setItem("access", "yes");
+      window.location.href = "index.html";
+    } else {
+      document.getElementById("msg").textContent = "Wrong password";
+    }
+  }
+</script>
+
+</body>
+</html>
