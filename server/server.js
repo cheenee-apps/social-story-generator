@@ -13,10 +13,13 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 const SPEECH_KEY = process.env.AZURE_SPEECH_KEY;
 const SPEECH_REGION = process.env.AZURE_SPEECH_REGION;
+const ALLOWED_VOICES = {
+  en: ["en-US-AriaNeural", "en-US-GuyNeural"],
+  fil: ["fil-PH-BlessicaNeural", "fil-PH-AngeloNeural"]
+};
 
 if (!SPEECH_KEY || !SPEECH_REGION) {
-  console.error("Missing Azure Speech credentials in environment variables.");
-  process.exit(1);
+  console.warn("Azure Speech credentials are missing. The website will run, but voice features will be unavailable.");
 }
 
 const rootDir = path.join(__dirname, "..");
@@ -32,10 +35,16 @@ app.get("/", (req, res) => {
 /* Azure TTS endpoint */
 app.post("/api/tts", async (req, res) => {
   try {
-    const { text, language = "en", style = "feminine" } = req.body || {};
+    const { text, language = "en", style = "feminine", voice = "" } = req.body || {};
 
     if (!text || !text.trim()) {
       return res.status(400).json({ error: "Missing text" });
+    }
+
+    if (!SPEECH_KEY || !SPEECH_REGION) {
+      return res.status(503).json({
+        error: "Voice service is not configured yet."
+      });
     }
 
     const speechConfig = sdk.SpeechConfig.fromSubscription(
@@ -46,19 +55,22 @@ app.post("/api/tts", async (req, res) => {
     speechConfig.speechSynthesisOutputFormat =
       sdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3;
 
-    let voice = "en-US-AriaNeural";
+    const voiceGroup = language === "en" ? "en" : "fil";
+    let selectedVoice;
 
-    if (language === "tl" || language === "ilo") {
-      voice = style === "masculine"
+    if (ALLOWED_VOICES[voiceGroup].includes(voice)) {
+      selectedVoice = voice;
+    } else if (voiceGroup === "fil") {
+      selectedVoice = style === "masculine"
         ? "fil-PH-AngeloNeural"
         : "fil-PH-BlessicaNeural";
     } else {
-      voice = style === "masculine"
+      selectedVoice = style === "masculine"
         ? "en-US-GuyNeural"
         : "en-US-AriaNeural";
     }
 
-    speechConfig.speechSynthesisVoiceName = voice;
+    speechConfig.speechSynthesisVoiceName = selectedVoice;
 
     const synthesizer = new sdk.SpeechSynthesizer(speechConfig);
 
@@ -66,6 +78,17 @@ app.post("/api/tts", async (req, res) => {
       text,
       (result) => {
         try {
+          if (
+            result.reason !== sdk.ResultReason.SynthesizingAudioCompleted ||
+            !result.audioData
+          ) {
+            console.error("Azure TTS canceled:", result.errorDetails || result.reason);
+            return res.status(502).json({
+              error:
+                "Azure Speech rejected the request. Check that the key, region, and Speech resource are still active."
+            });
+          }
+
           const audio = Buffer.from(result.audioData);
           res.setHeader("Content-Type", "audio/mpeg");
           res.send(audio);

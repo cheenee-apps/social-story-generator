@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Create Story</title>
+  <title>Create Story | Teacher Social Story Builder</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <script>
@@ -14,8 +14,9 @@
 <body>
   <header class="site-header">
     <div class="container">
+      <p class="brand-eyebrow">Teacher Social Story Builder</p>
       <h1>Create a Social Story</h1>
-      <p>Fill in the form, then click Generate Story.</p>
+      <p>Choose a situation, personalize the details, and generate a classroom-ready story.</p>
     </div>
   </header>
 
@@ -29,14 +30,22 @@
 
     <section class="card">
       <form id="storyForm">
+        <div class="form-intro">
+          <div>
+            <h2>Story details</h2>
+            <p class="muted">Fields marked with * are required.</p>
+          </div>
+          <p id="formProgress" class="form-progress" aria-live="polite">0 of 4 required fields complete</p>
+        </div>
+
         <div class="form-grid">
           <div class="form-group">
-            <label for="name">Student Name</label>
+            <label for="name">Student Name *</label>
             <input type="text" id="name" placeholder="e.g., Mia" required />
           </div>
 
           <div class="form-group">
-            <label for="transition">Transition Type</label>
+            <label for="transition">Situation or Transition *</label>
             <select id="transition" required>
               <option value="">Select a transition</option>
               <option value="starting class">Starting class</option>
@@ -49,34 +58,106 @@
             </select>
           </div>
 
+          <div class="form-group full-width hidden" id="customTransitionGroup">
+            <label for="customTransition">Describe the custom situation *</label>
+            <input type="text" id="customTransition" placeholder="e.g., packing up after art class" />
+          </div>
+
           <div class="form-group">
-            <label for="setting">Place / Setting</label>
+            <label for="setting">Place / Setting *</label>
             <input type="text" id="setting" placeholder="e.g., classroom, canteen, therapy room" required />
           </div>
 
           <div class="form-group">
-            <label for="emotion">Student Feeling</label>
-            <input type="text" id="emotion" placeholder="e.g., nervous, excited, frustrated" required />
+            <label for="emotion">Student Feeling *</label>
+            <select id="emotion" required>
+              <option value="">Select a feeling</option>
+              <option value="nervous">Nervous</option>
+              <option value="excited">Excited</option>
+              <option value="frustrated">Frustrated</option>
+              <option value="overwhelmed">Overwhelmed</option>
+              <option value="worried">Worried</option>
+              <option value="angry">Angry</option>
+              <option value="sad">Sad</option>
+              <option value="unsure">Unsure</option>
+              <option value="calm">Calm</option>
+              <option value="custom">Another feeling</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width hidden" id="customEmotionGroup">
+            <label for="customEmotion">Describe the feeling *</label>
+            <input type="text" id="customEmotion" placeholder="e.g., left out, rushed, or disappointed" />
+          </div>
+
+          <div class="form-group">
+            <label for="behaviorFocus">Common Behavior / Skill Focus</label>
+            <select id="behaviorFocus">
+              <option value="">No specific focus</option>
+              <option value="waiting for a turn">Waiting for a turn</option>
+              <option value="following directions">Following directions</option>
+              <option value="asking for help">Asking for help</option>
+              <option value="keeping hands and feet safe">Keeping hands and feet safe</option>
+              <option value="using a calm voice">Using a calm voice</option>
+              <option value="coping with changes">Coping with changes</option>
+              <option value="joining a group activity">Joining a group activity</option>
+              <option value="finishing a task">Finishing a task</option>
+              <option value="taking a break appropriately">Taking a break appropriately</option>
+              <option value="returning to the task">Returning to the task</option>
+            </select>
           </div>
 
           <div class="form-group">
             <label for="support">Helpful Support</label>
-            <input type="text" id="support" placeholder="e.g., timer, teacher reminder, reward chart" />
+            <input type="text" id="support" list="supportOptions" placeholder="Choose or type a support" />
+            <datalist id="supportOptions">
+              <option value="a visual schedule"></option>
+              <option value="a timer"></option>
+              <option value="a first-then board"></option>
+              <option value="a teacher reminder"></option>
+              <option value="a calm-down card"></option>
+              <option value="a short movement break"></option>
+              <option value="a choice board"></option>
+              <option value="positive praise"></option>
+            </datalist>
           </div>
 
           <div class="form-group">
             <label for="goal">Goal</label>
-            <input type="text" id="goal" placeholder="e.g., stay calm, follow directions, wait for turn" />
-          </div>
-
-          <div class="form-group full-width">
-            <label for="customTransition">If Custom, describe it here</label>
-            <input type="text" id="customTransition" placeholder="e.g., packing up after art class" />
+            <input type="text" id="goal" list="goalOptions" placeholder="Choose or type a goal" />
+            <datalist id="goalOptions">
+              <option value="stay calm"></option>
+              <option value="follow directions"></option>
+              <option value="wait for a turn"></option>
+              <option value="ask for help"></option>
+              <option value="use kind words"></option>
+              <option value="complete the routine"></option>
+              <option value="return to learning"></option>
+            </datalist>
           </div>
 
           <div class="form-group full-width">
             <label for="details">Personal Details to Include</label>
             <textarea id="details" rows="3" placeholder="e.g., likes stars, responds well to praise, sits near teacher"></textarea>
+            <p class="field-help">These details will be woven into the story instead of added as a separate note.</p>
+          </div>
+
+          <div class="form-group">
+            <label for="readingLevel">Age / Reading Level</label>
+            <select id="readingLevel">
+              <option value="early">Early learner (shortest sentences)</option>
+              <option value="emerging" selected>Emerging reader</option>
+              <option value="independent">Independent reader (more detail)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="visualStyle">Story Visuals</label>
+            <select id="visualStyle">
+              <option value="icons">AAC picture cards for each story part</option>
+              <option value="photo">Student photo / character only</option>
+              <option value="text">Text only</option>
+            </select>
           </div>
 
           <div class="form-group">
@@ -118,7 +199,7 @@
           <div class="form-group">
             <label for="voiceSelect">Exact Voice (Optional)</label>
             <select id="voiceSelect">
-              <option value="">Auto-select allowed voice</option>
+              <option value="">Auto-select an available voice</option>
             </select>
           </div>
         </div>
@@ -145,6 +226,16 @@
           </ul>
         </div>
 
+        <div class="helper-box voice-guide">
+          <h3>How to use the voice feature</h3>
+          <ol>
+            <li>Choose the story language and voice.</li>
+            <li>Generate the story, then select <strong>Read Story</strong> to listen.</li>
+            <li>Use Pause, Resume, or Stop while the story is being read aloud.</li>
+          </ol>
+          <p class="muted">Your device volume must be on. The deployed version uses the browser's available voices; MP3 download can be added later.</p>
+        </div>
+
         <div class="button-row">
           <button type="submit" class="btn">Generate Story</button>
           <button type="button" class="btn secondary-btn" id="clearBtn">Clear</button>
@@ -166,22 +257,26 @@
       <div class="button-row compact-buttons">
         <button type="button" class="btn small-btn" id="saveBtn">Save</button>
         <button type="button" class="btn secondary-btn small-btn" id="copyBtn">Copy</button>
-        <button type="button" class="btn secondary-btn small-btn" id="pdfBtn">PDF</button>
-        <button type="button" class="btn secondary-btn small-btn" id="downloadMp3Btn">MP3</button>
-        <button type="button" class="btn secondary-btn small-btn" id="readAloudBtn">Read</button>
+        <button type="button" class="btn secondary-btn small-btn" id="pdfBtn" aria-describedby="pdfAccessibilityNote">Download Accessible PDF</button>
+        <button type="button" class="btn secondary-btn small-btn" id="readAloudBtn">Read Story</button>
         <button type="button" class="btn secondary-btn small-btn" id="pauseReadingBtn">Pause</button>
         <button type="button" class="btn secondary-btn small-btn" id="resumeReadingBtn">Resume</button>
         <button type="button" class="btn secondary-btn small-btn" id="stopReadingBtn">Stop</button>
         <button type="button" class="btn secondary-btn small-btn" onclick="window.print()">Print</button>
       </div>
 
-      <p class="muted read-aloud-note">
-        Read Aloud and MP3 use the full one-page story.
-      </p>
+      <p id="actionStatus" class="status-message muted" aria-live="polite">Read Aloud uses the full story. MP3 download is temporarily paused for this version.</p>
+      <p id="pdfAccessibilityNote" class="field-help">PDF text is selectable, searchable, zoomable, and arranged in a logical reading order for PDF readers.</p>
     </section>
-<button class="btn secondary-btn small-btn" onclick="logout()">Logout</button>
-    <section class="card">
-      <h2>One Pager Preview</h2>
+
+    <section class="card export-section">
+      <div class="section-heading">
+        <div>
+          <h2>Visual Story Preview</h2>
+          <p class="muted">Original AAC-style picture cards are included in PDF and print exports.</p>
+        </div>
+      </div>
+
       <div class="one-pager" id="onePagerOutput">
         <div class="one-pager-header">
           <div class="one-pager-visual">
@@ -195,8 +290,14 @@
           </div>
         </div>
 
-        <div id="onePagerText" class="one-pager-text">
+        <div id="visualStoryPanels" class="visual-story-panels" aria-label="Illustrated story panels"></div>
+
+        <div id="onePagerText" class="one-pager-text text-only-preview">
           Your generated story will appear here.
+        </div>
+
+        <div class="story-watermark">
+          Created with <strong>Teacher Social Story Builder</strong>
         </div>
       </div>
     </section>
@@ -209,7 +310,10 @@
     </section>
 
     <section class="card">
-      <a href="index.html" class="btn secondary-btn">Back to Home</a>
+      <div class="button-row">
+        <a href="index.html" class="btn secondary-btn">Back to Home</a>
+        <button class="btn secondary-btn" onclick="logout()">Logout</button>
+      </div>
     </section>
   </main>
 
@@ -221,12 +325,13 @@
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="aac-symbols.js"></script>
   <script src="script.js"></script>
-<script>
-  function logout() {
-    localStorage.removeItem("access");
-    window.location.href = "login.html";
-  }
-</script>
+  <script>
+    function logout() {
+      localStorage.removeItem("access");
+      window.location.href = "login.html";
+    }
+  </script>
 </body>
 </html>
